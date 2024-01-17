@@ -2,6 +2,8 @@ package src;
 
 import src.budget.Budget;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -9,19 +11,24 @@ import java.util.logging.Logger;
 
 class ExpenseTracker {
 
-    private HashMap<Integer, Transaction> transactionMap;
+    private static HashMap<Integer, Transaction> transactionMap = new HashMap<>();
 
-    private List<Category> categoryList;
+    private static List<Category> categoryList = new ArrayList<>();
 
-    private Budget budget;
+    private static Budget overallBudget;
 
-    private final Logger logger = Logger.getLogger(ExpenseTracker.class.getName());
+    private static final Logger logger = Logger.getLogger(ExpenseTracker.class.getName());
 
     public static void main(String[] args) {
 
+        Category categoryFood = new Category(1, "Food");
+        Transaction t1 = new Transaction(1, categoryFood, LocalDateTime.now(), 1000.00, false, "checken bucket");
+        addTransaction(t1);
+        viewTransactions();
+
     }
 
-    private void viewTransactions(){
+    private static void viewTransactions(){
 
         for(Transaction transaction: transactionMap.values()){
             logger.log(Level.INFO, transaction.toString());
@@ -29,32 +36,32 @@ class ExpenseTracker {
 
     }
 
-    private void addTransaction(Transaction transaction){
+    private static void addTransaction(Transaction transaction){
         transactionMap.put(transaction.getId(), transaction);
     }
 
-    private void editTransaction(Transaction transaction){
+    private static void editTransaction(Transaction transaction){
         transactionMap.replace(transaction.getId(), transaction);
     }
 
-    private void deleteTransaction(Transaction transaction){
+    private static void deleteTransaction(Transaction transaction){
         transactionMap.remove(transaction.getId());
 
     }
 
-    private void viewCategories(){
+    private static void viewCategories(){
         for(Category category : categoryList){
             logger.log(Level.INFO, category.toString());
         }
     }
 
-    private void addCategory(Category category){
+    private static void addCategory(Category category){
 
         categoryList.add(category);
     }
 
-    private void setBudget(Budget budget){
-        this.budget = budget;
+    private static void setBudget(Budget budget){
+        overallBudget = budget;
     }
 
     private void trackProgress(){

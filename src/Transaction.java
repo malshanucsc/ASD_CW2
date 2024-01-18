@@ -1,6 +1,7 @@
 package src;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Transaction {
     private int id;
@@ -10,8 +11,10 @@ public class Transaction {
     private boolean recurring;
     private String note;
 
-    public Transaction(int id, Category category, LocalDateTime dateTime, double amount, boolean recurring, String note) {
-        this.id = id;
+    private final static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+
+    public Transaction(Category category, LocalDateTime dateTime, double amount, boolean recurring, String note) {
+        this.id = ID_GENERATOR.getAndIncrement();
         this.category = category;
         this.dateTime = dateTime;
         this.amount = amount;

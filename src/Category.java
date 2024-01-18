@@ -1,12 +1,16 @@
 package src;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Category {
 
     private int id;
     private String name;
 
-    public Category(int id, String name) {
-        this.id = id;
+    private final static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+
+    public Category(String name) {
+        this.id = ID_GENERATOR.getAndIncrement();
         this.name = name;
     }
 

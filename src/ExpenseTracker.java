@@ -21,9 +21,12 @@ class ExpenseTracker {
 
     public static void main(String[] args) {
 
-        Category categoryFood = new Category(1, "Food");
-        Transaction t1 = new Transaction(1, categoryFood, LocalDateTime.now(), 1000.00, false, "checken bucket");
+        Category categoryFood = new Category("Food");
+        Transaction t1 = new Transaction(categoryFood, LocalDateTime.now(), 1000.00, false, "chicken bucket");
+        Transaction t2 = new Transaction(categoryFood, LocalDateTime.now(), 1000.00, false, "carrot bucket");
+
         addTransaction(t1);
+        addTransaction(t2);
         viewTransactions();
 
     }

@@ -109,7 +109,7 @@ public class ExpenseTracker {
         logger.log(Level.INFO, "Enter overall budget amount:");
         double overallBudgetAmount = scanner.nextDouble();
 
-        // Assuming you have a List<CategoryBudget> to set category-wise budgets
+        //  List<CategoryBudget> to set category-wise budgets
         List<CategoryBudget> categoryBudgets = new ArrayList<>();  // You may initialize this list as needed
 
         Budget budget = new Budget(categoryBudgets, overallBudgetAmount);
@@ -118,7 +118,7 @@ public class ExpenseTracker {
         logger.log(Level.INFO, "Overall budget set successfully.");
 }
 
-    // Other methods like editTransaction, deleteTransaction, trackProgress, etc., can be implemented here
+    // Other methods like editTransaction, deleteTransaction, trackProgress, etc implements here
 
     private static void addTransaction(Transaction transaction) {
         transactionMap.put(transaction.getId(), transaction);

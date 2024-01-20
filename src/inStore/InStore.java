@@ -2,6 +2,7 @@ package src.inStore;
 
 import src.Category;
 import src.Transaction;
+import src.budget.Budget;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -10,10 +11,12 @@ public class InStore {
 
     private InStore inStore;
 
-    private  final Map<Integer, Transaction> transactionMap;
+    private   Map<Integer, Transaction> transactionMap;
 
-    private  final List<Category> categoryList;
-    private InStore () {
+    private   Map<Integer, Category> categoryMap;
+
+    private Budget budget;
+    public InStore () {
 
 
         Category foodAndGrocery = new Category("Food & Grocery");
@@ -25,7 +28,16 @@ public class InStore {
         Category insurance = new Category("Insurance");
         Category other = new Category("Other Miscellaneous");
 
-        categoryList = Arrays.asList(foodAndGrocery, rentAndLease, utility, education, entertainment, transport, insurance, other);
+        categoryMap = new HashMap<>();
+        categoryMap.put(foodAndGrocery.getId(), foodAndGrocery);
+        categoryMap.put(rentAndLease.getId(), rentAndLease);
+        categoryMap.put(utility.getId(), utility);
+        categoryMap.put(education.getId(), education);
+        categoryMap.put(entertainment.getId(), entertainment);
+        categoryMap.put(transport.getId(), transport);
+        categoryMap.put(insurance.getId(), insurance);
+        categoryMap.put(other.getId(), other);
+
 
         Transaction transaction1 = new Transaction(foodAndGrocery, LocalDateTime.now(), 1200.00, false, "Chicken");
         Transaction transaction2 = new Transaction(foodAndGrocery, LocalDateTime.now(), 2200.00, false, "Carrot");
@@ -79,8 +91,15 @@ public class InStore {
         return transactionMap;
     }
 
-    public List<Category> getCategoryList(){
-        return categoryList;
+    public Map<Integer, Category> getCategoryMap(){
+        return categoryMap;
     }
 
+    public Budget getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Budget budget) {
+        this.budget = budget;
+    }
 }

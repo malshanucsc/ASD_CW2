@@ -1,21 +1,23 @@
 package src.budget;
 
+import src.Category;
+
 public class CategoryBudget {
 
-    private int categoryId;
+    private Category category;
     private double budget;
 
-    public CategoryBudget(int categoryId, double budget) {
-        this.categoryId = categoryId;
+    public CategoryBudget(Category category, double budget) {
+        this.category = category;
         this.budget = budget;
     }
 
-    public int getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public double getBudget() {

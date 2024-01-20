@@ -19,8 +19,8 @@ public class ExpenseTracker {
             displayMenu();
             int choice = 0;
             try {
-                 choice = scanner.nextInt();
-            } catch (InputMismatchException inputMismatchException){
+                choice = scanner.nextInt();
+            } catch (InputMismatchException inputMismatchException) {
                 System.out.println("Incorrect data type. Please enter an int input type.");
                 scanner.next();
             }
@@ -41,9 +41,12 @@ public class ExpenseTracker {
                     setBudget(scanner);
                     break;
                 case 6:
-                    trackProgress();
+                    resetBudget();
                     break;
                 case 7:
+                    trackProgress();
+                    break;
+                case 8:
                     System.out.println("Exiting the ExpenseTracker application.");
                     System.exit(0);
                     break;
@@ -60,16 +63,16 @@ public class ExpenseTracker {
         System.out.println("3. View Categories");
         System.out.println("4. Add Category");
         System.out.println("5. Set Budget");
-        System.out.println("6. Track Current Progress");
-        System.out.println("7. Exit");
+        System.out.println("6. Reset Budget");
+        System.out.println("7. Track Current Progress");
+        System.out.println("8. Exit");
         System.out.println("Enter your choice: ");
     }
 
     private static void viewTransactions() {
 
         TransactionIterator iterator = transactionCollection.createTransactionIterator(inStore);
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Transaction transaction = iterator.next();
             System.out.println(transaction.toString());
         }
@@ -85,30 +88,30 @@ public class ExpenseTracker {
 
         Category category;
 
-        while(true){
+        while (true) {
             String isUsingExisting = scanner.next();
-            if(isUsingExisting.equals("Y")){
+            if (isUsingExisting.equals("Y")) {
 
                 System.out.println("Enter category Id?");
                 int categoryId;
-                while(true){
-                try {
-                    categoryId = scanner.nextInt();
-                    if(inStore.getCategoryMap().getOrDefault(categoryId, null)!=null){
-                        break;
-                    } else{
-                        viewCategories();
-                        System.out.println("Incorrect ID. Please enter correct category id from above list");
+                while (true) {
+                    try {
+                        categoryId = scanner.nextInt();
+                        if (inStore.getCategoryMap().getOrDefault(categoryId, null) != null) {
+                            break;
+                        } else {
+                            viewCategories();
+                            System.out.println("Incorrect ID. Please enter correct category id from above list");
+                        }
+                    } catch (InputMismatchException inputMismatchException) {
+                        System.out.println("Incorrect data type. Please enter an int input type.");
+                        scanner.next();
                     }
-                } catch (InputMismatchException inputMismatchException) {
-                    System.out.println("Incorrect data type. Please enter an int input type.");
-                    scanner.next();
-                }
                 }
                 category = inStore.getCategoryMap().get(categoryId);
                 break;
 
-            }else if(isUsingExisting.equals("N")){
+            } else if (isUsingExisting.equals("N")) {
 
                 String categoryName = scanner.nextLine();
                 category = new Category(categoryName);
@@ -122,7 +125,7 @@ public class ExpenseTracker {
 
         System.out.print("Enter amount: ");
         double amount;
-        while(true){
+        while (true) {
             try {
                 amount = scanner.nextDouble();
                 break;
@@ -135,7 +138,7 @@ public class ExpenseTracker {
         System.out.print("Is the transaction recurring? (true/false): ");
 
         boolean recurring;
-        while(true){
+        while (true) {
             try {
                 recurring = scanner.nextBoolean();
                 scanner.nextLine();
@@ -176,7 +179,7 @@ public class ExpenseTracker {
         System.out.print("Enter overall budget amount: ");
         Budget userBudget;
         double overallBudgetAmount;
-        while(true){
+        while (true) {
             try {
                 overallBudgetAmount = scanner.nextDouble();
                 break;
@@ -188,10 +191,10 @@ public class ExpenseTracker {
 
         List<CategoryBudget> categoryBudgets = new ArrayList<>();
 
-        for(Category category : inStore.getCategoryMap().values()){
-            System.out.println("Enter the budget for "+category.getName()+" category");
+        for (Category category : inStore.getCategoryMap().values()) {
+            System.out.println("Enter the budget for " + category.getName() + " category");
             double categoryBudget;
-            while(true){
+            while (true) {
                 try {
                     categoryBudget = scanner.nextDouble();
                     break;
@@ -208,7 +211,7 @@ public class ExpenseTracker {
 
         inStore.setBudget(userBudget);
 
-        System.out.println("Overall budget set successfully.");
+        System.out.println("Budget set successfully.");
     }
 
     private static Map<String, Double> summarizeTransactions() {
@@ -216,13 +219,12 @@ public class ExpenseTracker {
         TransactionIterator iterator = transactionCollection.createTransactionIterator(inStore);
         Map<String, Double> summarizedTransactions = new HashMap<>();
         double overallTransactionAmount = 0.0;
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Transaction transaction = iterator.next();
             String categoryName = transaction.getCategory().getName();
 
             double categoryTotalAmount = summarizedTransactions.getOrDefault(
-                    categoryName,0.0) + transaction.getAmount();
+                    categoryName, 0.0) + transaction.getAmount();
             summarizedTransactions.put(categoryName, categoryTotalAmount);
             overallTransactionAmount += transaction.getAmount();
         }
@@ -231,24 +233,30 @@ public class ExpenseTracker {
     }
 
 
-    private static void trackProgress(){
-
-        System.out.println("Your current progress for the budget can be seen as follows");
-        Map<String, Double> summarizedTransactions = summarizeTransactions();
+    private static void trackProgress() {
         Budget budget = inStore.getBudget();
-        if(budget == null) {
+        if (budget == null) {
             System.out.println("Please set the budget first");
             return;
         }
 
-            System.out.println("Overall allocated budget: " + budget.getTotalBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault("overall", 0.00));
+        System.out.println("Your current progress for the budget can be seen as follows");
+        Map<String, Double> summarizedTransactions = summarizeTransactions();
 
 
-            for (CategoryBudget categoryBudget : budget.getCategoryBudgets()) {
-                String categoryName = categoryBudget.getCategory().getName();
-                System.out.println("Budget for " + categoryName + ": " + categoryBudget.getBudget() +" and current expenditure: " + summarizedTransactions.getOrDefault(categoryName, 0.0));
-            }
+        System.out.println("Overall allocated budget: " + budget.getTotalBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault("overall", 0.00));
 
+
+        for (CategoryBudget categoryBudget : budget.getCategoryBudgets()) {
+            String categoryName = categoryBudget.getCategory().getName();
+            System.out.println("Budget for " + categoryName + ": " + categoryBudget.getBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault(categoryName, 0.0));
+        }
+
+    }
+
+    private static void resetBudget() {
+        inStore.setBudget(null);
+        System.out.println("Budget reset completed");
     }
 
 

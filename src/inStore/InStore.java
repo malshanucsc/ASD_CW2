@@ -13,7 +13,7 @@ public class InStore {
     private  final Map<Integer, Transaction> transactionMap;
 
     private  final List<Category> categoryList;
-    private InStore () {
+    public InStore () {
 
 
         Category foodAndGrocery = new Category("Food & Grocery");

@@ -15,7 +15,7 @@ public class InStore {
 
     private final Map<Integer, Category> categoryMap;
 
-    public InStore() {
+    private InStore() {
 
         Category foodAndGrocery = new Category("Food & Grocery");
         Category rentAndLease = new Category("Rent/Lease");

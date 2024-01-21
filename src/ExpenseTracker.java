@@ -1,22 +1,26 @@
 package src;
 
-import src.budget.Budget;
-import src.budget.CategoryBudget;
 import src.inStore.InStore;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Map;
+import java.util.Scanner;
 
 public class ExpenseTracker {
 
+    static TransactionCollection transactionCollection;
     private final InStore inStore;  // Create an instance of InStore
-    static TransactionCollection transactionCollection = new TransactionCollection();
 
-    public ExpenseTracker(){
-        inStore = new InStore().getInstore();
-
+    public ExpenseTracker() {
+        inStore = InStore.getInstore();
+        transactionCollection = new TransactionCollection();
     }
 
+    /**
+     * iterate though all transactions and view the transaction details
+     */
     public void viewTransactions() {
 
         TransactionIterator iterator = transactionCollection.createTransactionIterator(inStore);
@@ -26,6 +30,11 @@ public class ExpenseTracker {
         }
     }
 
+    /**
+     * add a new transaction
+     *
+     * @param scanner system input object for user input
+     */
     public void addTransaction(Scanner scanner) {
         // Add transaction to InStore
         System.out.println("Enter transaction details:");
@@ -105,6 +114,9 @@ public class ExpenseTracker {
         System.out.println("Transaction added successfully.");
     }
 
+    /**
+     * view available categories
+     */
     public void viewCategories() {
         // Get categories from InStore
         for (Category category : inStore.getCategoryMap().values()) {
@@ -112,6 +124,11 @@ public class ExpenseTracker {
         }
     }
 
+    /**
+     * add a new Category
+     *
+     * @param scanner system input object for user input
+     */
     public void addCategory(Scanner scanner) {
         // Add category to InStore
         System.out.print("Enter category name: ");
@@ -121,22 +138,12 @@ public class ExpenseTracker {
         System.out.println("Category added successfully.");
     }
 
+    /**
+     * set budget for each category
+     *
+     * @param scanner system input object for user input
+     */
     public void setBudget(Scanner scanner) {
-        // Set budget in InStore
-        System.out.print("Enter overall budget amount: ");
-        Budget userBudget;
-        double overallBudgetAmount;
-        while (true) {
-            try {
-                overallBudgetAmount = scanner.nextDouble();
-                break;
-            } catch (InputMismatchException inputMismatchException) {
-                System.out.println("Incorrect data type. Please enter a double input type.");
-                scanner.next();
-            }
-        }
-
-        List<CategoryBudget> categoryBudgets = new ArrayList<>();
 
         for (Category category : inStore.getCategoryMap().values()) {
             System.out.println("Enter the budget for " + category.getName() + " category");
@@ -150,14 +157,17 @@ public class ExpenseTracker {
                     scanner.next();
                 }
             }
-            categoryBudgets.add(new CategoryBudget(category, categoryBudget));
+            category.setCategoryBudget(categoryBudget);
         }
 
-        userBudget = new Budget(categoryBudgets, overallBudgetAmount);
-        inStore.setBudget(userBudget);
         System.out.println("Budget set successfully.");
     }
 
+    /**
+     * summarize the transactions by each category
+     *
+     * @return map of summed transaction for each category name
+     */
     private Map<String, Double> summarizeTransactions() {
 
         TransactionIterator iterator = transactionCollection.createTransactionIterator(inStore);
@@ -177,29 +187,22 @@ public class ExpenseTracker {
     }
 
 
+    /**
+     * shows the progress of the users based of the budget and current transactions
+     */
     public void trackProgress() {
-        Budget budget = inStore.getBudget();
-        if (budget == null) {
-            System.out.println("Please set the budget first");
-            return;
-        }
+        System.out.println("Please make sure you have set the budget for each category");
+
+        Map<String, Double> summarizedTransactions = summarizeTransactions();
+        double overallBudget = 0;
 
         System.out.println("Your current progress for the budget can be seen as follows");
-        Map<String, Double> summarizedTransactions = summarizeTransactions();
 
-        System.out.println("Overall allocated budget: " + budget.getTotalBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault("overall", 0.00));
-
-        for (CategoryBudget categoryBudget : budget.getCategoryBudgets()) {
-            String categoryName = categoryBudget.getCategory().getName();
-            System.out.println("Budget for " + categoryName + ": " + categoryBudget.getBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault(categoryName, 0.0));
+        for (Category category : inStore.getCategoryMap().values()) {
+            String categoryName = category.getName();
+            System.out.println("Budget for " + categoryName + ": " + category.getCategoryBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault(categoryName, 0.0));
+            overallBudget += category.getCategoryBudget();
         }
-
+        System.out.println("Overall allocated budget: " + overallBudget + " and current expenditure: " + summarizedTransactions.getOrDefault("overall", 0.00));
     }
-
-    public void resetBudget() {
-        inStore.setBudget(null);
-        System.out.println("Budget reset completed");
-    }
-
-
 }

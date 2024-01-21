@@ -35,12 +35,9 @@ public class ApplicationStart {
                     expenseTracker.setBudget(scanner);
                     break;
                 case 6:
-                    expenseTracker.resetBudget();
-                    break;
-                case 7:
                     expenseTracker.trackProgress();
                     break;
-                case 8:
+                case 7:
                     System.out.println("Exiting the ExpenseTracker application.");
                     System.exit(0);
                     break;
@@ -50,6 +47,9 @@ public class ApplicationStart {
         }
     }
 
+    /**
+     * view the menu items
+     */
     private static void displayMenu() {
         System.out.println("ExpenseTracker Menu:");
         System.out.println("1. View Transactions");
@@ -57,9 +57,8 @@ public class ApplicationStart {
         System.out.println("3. View Categories");
         System.out.println("4. Add Category");
         System.out.println("5. Set Budget");
-        System.out.println("6. Reset Budget");
-        System.out.println("7. Track Current Progress");
-        System.out.println("8. Exit");
+        System.out.println("6. Track Current Progress");
+        System.out.println("7. Exit");
         System.out.println("Enter your choice: ");
     }
 

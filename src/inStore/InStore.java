@@ -2,25 +2,23 @@ package src.inStore;
 
 import src.Category;
 import src.Transaction;
-import src.budget.Budget;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InStore {
 
-    private InStore inStore;
+    private static InStore inStore;
 
-    private   Map<Integer, Transaction> transactionMap;
+    private final Map<Integer, Transaction> transactionMap;
 
-    private   Map<Integer, Category> categoryMap;
+    private final Map<Integer, Category> categoryMap;
 
-    private Budget budget;
-    public InStore () {
-
+    public InStore() {
 
         Category foodAndGrocery = new Category("Food & Grocery");
-        Category rentAndLease = new Category( "Rent/Lease");
+        Category rentAndLease = new Category("Rent/Lease");
         Category utility = new Category("Utility");
         Category education = new Category("Education");
         Category entertainment = new Category("Entertainment");
@@ -80,26 +78,19 @@ public class InStore {
 
     }
 
-    public InStore getInstore(){
-        if(inStore == null){
+    public static InStore getInstore() {
+        if (inStore == null) {
             inStore = new InStore();
         }
         return inStore;
     }
 
-    public Map<Integer, Transaction> getTransactionMap(){
+    public Map<Integer, Transaction> getTransactionMap() {
         return transactionMap;
     }
 
-    public Map<Integer, Category> getCategoryMap(){
+    public Map<Integer, Category> getCategoryMap() {
         return categoryMap;
     }
 
-    public Budget getBudget() {
-        return budget;
-    }
-
-    public void setBudget(Budget budget) {
-        this.budget = budget;
-    }
 }

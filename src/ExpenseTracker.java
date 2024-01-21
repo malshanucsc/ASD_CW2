@@ -9,67 +9,15 @@ import java.util.*;
 
 public class ExpenseTracker {
 
-    private static final InStore inStore = new InStore().getInstore(); // Create an instance of InStore
+    private final InStore inStore;  // Create an instance of InStore
     static TransactionCollection transactionCollection = new TransactionCollection();
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    public ExpenseTracker(){
+        inStore = new InStore().getInstore();
 
-        while (true) {
-            displayMenu();
-            int choice = 0;
-            try {
-                choice = scanner.nextInt();
-            } catch (InputMismatchException inputMismatchException) {
-                System.out.println("Incorrect data type. Please enter an int input type.");
-                scanner.next();
-            }
-            switch (choice) {
-                case 1:
-                    viewTransactions();
-                    break;
-                case 2:
-                    addTransaction(scanner);
-                    break;
-                case 3:
-                    viewCategories();
-                    break;
-                case 4:
-                    addCategory(scanner);
-                    break;
-                case 5:
-                    setBudget(scanner);
-                    break;
-                case 6:
-                    resetBudget();
-                    break;
-                case 7:
-                    trackProgress();
-                    break;
-                case 8:
-                    System.out.println("Exiting the ExpenseTracker application.");
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please choose a valid option.");
-            }
-        }
     }
 
-    private static void displayMenu() {
-        System.out.println("ExpenseTracker Menu:");
-        System.out.println("1. View Transactions");
-        System.out.println("2. Add Transaction");
-        System.out.println("3. View Categories");
-        System.out.println("4. Add Category");
-        System.out.println("5. Set Budget");
-        System.out.println("6. Reset Budget");
-        System.out.println("7. Track Current Progress");
-        System.out.println("8. Exit");
-        System.out.println("Enter your choice: ");
-    }
-
-    private static void viewTransactions() {
+    public void viewTransactions() {
 
         TransactionIterator iterator = transactionCollection.createTransactionIterator(inStore);
         while (iterator.hasNext()) {
@@ -78,7 +26,7 @@ public class ExpenseTracker {
         }
     }
 
-    private static void addTransaction(Scanner scanner) {
+    public void addTransaction(Scanner scanner) {
         // Add transaction to InStore
         System.out.println("Enter transaction details:");
 
@@ -152,20 +100,19 @@ public class ExpenseTracker {
         System.out.print("Enter note: ");
         String note = scanner.nextLine();
 
-
         Transaction transaction = new Transaction(category, LocalDateTime.now(), amount, recurring, note);
         inStore.getTransactionMap().put(transaction.getId(), transaction);
         System.out.println("Transaction added successfully.");
     }
 
-    private static void viewCategories() {
+    public void viewCategories() {
         // Get categories from InStore
         for (Category category : inStore.getCategoryMap().values()) {
             System.out.println(category.toString());
         }
     }
 
-    private static void addCategory(Scanner scanner) {
+    public void addCategory(Scanner scanner) {
         // Add category to InStore
         System.out.print("Enter category name: ");
         String categoryName = scanner.nextLine();
@@ -174,7 +121,7 @@ public class ExpenseTracker {
         System.out.println("Category added successfully.");
     }
 
-    private static void setBudget(Scanner scanner) {
+    public void setBudget(Scanner scanner) {
         // Set budget in InStore
         System.out.print("Enter overall budget amount: ");
         Budget userBudget;
@@ -206,15 +153,12 @@ public class ExpenseTracker {
             categoryBudgets.add(new CategoryBudget(category, categoryBudget));
         }
 
-
         userBudget = new Budget(categoryBudgets, overallBudgetAmount);
-
         inStore.setBudget(userBudget);
-
         System.out.println("Budget set successfully.");
     }
 
-    private static Map<String, Double> summarizeTransactions() {
+    private Map<String, Double> summarizeTransactions() {
 
         TransactionIterator iterator = transactionCollection.createTransactionIterator(inStore);
         Map<String, Double> summarizedTransactions = new HashMap<>();
@@ -233,7 +177,7 @@ public class ExpenseTracker {
     }
 
 
-    private static void trackProgress() {
+    public void trackProgress() {
         Budget budget = inStore.getBudget();
         if (budget == null) {
             System.out.println("Please set the budget first");
@@ -243,9 +187,7 @@ public class ExpenseTracker {
         System.out.println("Your current progress for the budget can be seen as follows");
         Map<String, Double> summarizedTransactions = summarizeTransactions();
 
-
         System.out.println("Overall allocated budget: " + budget.getTotalBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault("overall", 0.00));
-
 
         for (CategoryBudget categoryBudget : budget.getCategoryBudgets()) {
             String categoryName = categoryBudget.getCategory().getName();
@@ -254,7 +196,7 @@ public class ExpenseTracker {
 
     }
 
-    private static void resetBudget() {
+    public void resetBudget() {
         inStore.setBudget(null);
         System.out.println("Budget reset completed");
     }

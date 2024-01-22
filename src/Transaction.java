@@ -22,6 +22,11 @@ public class Transaction {
         this.note = note;
     }
 
+    public Transaction() {
+        this.id = ID_GENERATOR_TRANSACTION.getAndIncrement();
+
+    }
+
     public int getId() {
         return id;
     }

@@ -36,8 +36,9 @@ public class ExpenseTracker {
      * @param scanner system input object for user input
      */
     public void addTransaction(Scanner scanner) {
-        // Add transaction to InStore
+
         System.out.println("Enter transaction details:");
+        Transaction newTransaction = new Transaction();
 
         System.out.println("Enter category: ");
         viewCategories();
@@ -79,6 +80,7 @@ public class ExpenseTracker {
             }
         }
 
+        newTransaction.setCategory(category);
 
         System.out.print("Enter amount: ");
         double amount;
@@ -91,6 +93,7 @@ public class ExpenseTracker {
                 scanner.next();
             }
         }
+        newTransaction.setAmount(amount);
 
         System.out.print("Is the transaction recurring? (true/false): ");
 
@@ -105,13 +108,35 @@ public class ExpenseTracker {
                 scanner.next();
             }
         }
+        newTransaction.setRecurring(recurring);
 
         System.out.print("Enter note: ");
         String note = scanner.nextLine();
 
-        Transaction transaction = new Transaction(category, LocalDateTime.now(), amount, recurring, note);
-        inStore.getTransactionMap().put(transaction.getId(), transaction);
-        System.out.println("Transaction added successfully.");
+        newTransaction.setNote(note);
+        newTransaction.setDateTime(LocalDateTime.now());
+
+        System.out.print("Confirm Transaction? (true/false): ");
+
+        boolean confirmTransaction;
+        while (true) {
+            try {
+                confirmTransaction = scanner.nextBoolean();
+                scanner.nextLine();
+                break;
+            } catch (InputMismatchException inputMismatchException) {
+                System.out.println("Incorrect data type. Please enter (true/false) input type.");
+                scanner.next();
+            }
+        }
+        if (confirmTransaction) {
+
+            inStore.getTransactionMap().put(newTransaction.getId(), newTransaction);
+
+            System.out.println("Transaction added successfully.");
+        } else {
+            newTransaction = null;
+        }
     }
 
     /**

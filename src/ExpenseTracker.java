@@ -1,75 +1,27 @@
 package src;
 
-import src.budget.Budget;
-import src.budget.CategoryBudget;
 import src.inStore.InStore;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Map;
+import java.util.Scanner;
 
 public class ExpenseTracker {
 
-    private static final InStore inStore = new InStore().getInstore(); // Create an instance of InStore
-    static TransactionCollection transactionCollection = new TransactionCollection();
+    static TransactionCollection transactionCollection;
+    private final InStore inStore;  // Create an instance of InStore
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            displayMenu();
-            int choice = 0;
-            try {
-                choice = scanner.nextInt();
-            } catch (InputMismatchException inputMismatchException) {
-                System.out.println("Incorrect data type. Please enter an int input type.");
-                scanner.next();
-            }
-            switch (choice) {
-                case 1:
-                    viewTransactions();
-                    break;
-                case 2:
-                    addTransaction(scanner);
-                    break;
-                case 3:
-                    viewCategories();
-                    break;
-                case 4:
-                    addCategory(scanner);
-                    break;
-                case 5:
-                    setBudget(scanner);
-                    break;
-                case 6:
-                    resetBudget();
-                    break;
-                case 7:
-                    trackProgress();
-                    break;
-                case 8:
-                    System.out.println("Exiting the ExpenseTracker application.");
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please choose a valid option.");
-            }
-        }
+    public ExpenseTracker() {
+        inStore = InStore.getInstore();
+        transactionCollection = new TransactionCollection();
     }
 
-    private static void displayMenu() {
-        System.out.println("ExpenseTracker Menu:");
-        System.out.println("1. View Transactions");
-        System.out.println("2. Add Transaction");
-        System.out.println("3. View Categories");
-        System.out.println("4. Add Category");
-        System.out.println("5. Set Budget");
-        System.out.println("6. Reset Budget");
-        System.out.println("7. Track Current Progress");
-        System.out.println("8. Exit");
-        System.out.println("Enter your choice: ");
-    }
-
-    private static void viewTransactions() {
+    /**
+     * iterate though all transactions and view the transaction details
+     */
+    public void viewTransactions() {
 
         TransactionIterator iterator = transactionCollection.createTransactionIterator(inStore);
         while (iterator.hasNext()) {
@@ -78,9 +30,15 @@ public class ExpenseTracker {
         }
     }
 
-    private static void addTransaction(Scanner scanner) {
-        // Add transaction to InStore
+    /**
+     * add a new transaction
+     *
+     * @param scanner system input object for user input
+     */
+    public void addTransaction(Scanner scanner) {
+
         System.out.println("Enter transaction details:");
+        Transaction newTransaction = new Transaction();
 
         System.out.println("Enter category: ");
         viewCategories();
@@ -122,6 +80,7 @@ public class ExpenseTracker {
             }
         }
 
+        newTransaction.setCategory(category);
 
         System.out.print("Enter amount: ");
         double amount;
@@ -134,6 +93,7 @@ public class ExpenseTracker {
                 scanner.next();
             }
         }
+        newTransaction.setAmount(amount);
 
         System.out.print("Is the transaction recurring? (true/false): ");
 
@@ -148,24 +108,53 @@ public class ExpenseTracker {
                 scanner.next();
             }
         }
+        newTransaction.setRecurring(recurring);
 
         System.out.print("Enter note: ");
         String note = scanner.nextLine();
 
+        newTransaction.setNote(note);
+        newTransaction.setDateTime(LocalDateTime.now());
 
-        Transaction transaction = new Transaction(category, LocalDateTime.now(), amount, recurring, note);
-        inStore.getTransactionMap().put(transaction.getId(), transaction);
-        System.out.println("Transaction added successfully.");
+        System.out.print("Confirm Transaction? (true/false): ");
+
+        boolean confirmTransaction;
+        while (true) {
+            try {
+                confirmTransaction = scanner.nextBoolean();
+                scanner.nextLine();
+                break;
+            } catch (InputMismatchException inputMismatchException) {
+                System.out.println("Incorrect data type. Please enter (true/false) input type.");
+                scanner.next();
+            }
+        }
+        if (confirmTransaction) {
+
+            inStore.getTransactionMap().put(newTransaction.getId(), newTransaction);
+
+            System.out.println("Transaction added successfully.");
+        } else {
+            newTransaction = null;
+        }
     }
 
-    private static void viewCategories() {
+    /**
+     * view available categories
+     */
+    public void viewCategories() {
         // Get categories from InStore
         for (Category category : inStore.getCategoryMap().values()) {
             System.out.println(category.toString());
         }
     }
 
-    private static void addCategory(Scanner scanner) {
+    /**
+     * add a new Category
+     *
+     * @param scanner system input object for user input
+     */
+    public void addCategory(Scanner scanner) {
         // Add category to InStore
         System.out.print("Enter category name: ");
         String categoryName = scanner.nextLine();
@@ -174,22 +163,12 @@ public class ExpenseTracker {
         System.out.println("Category added successfully.");
     }
 
-    private static void setBudget(Scanner scanner) {
-        // Set budget in InStore
-        System.out.print("Enter overall budget amount: ");
-        Budget userBudget;
-        double overallBudgetAmount;
-        while (true) {
-            try {
-                overallBudgetAmount = scanner.nextDouble();
-                break;
-            } catch (InputMismatchException inputMismatchException) {
-                System.out.println("Incorrect data type. Please enter a double input type.");
-                scanner.next();
-            }
-        }
-
-        List<CategoryBudget> categoryBudgets = new ArrayList<>();
+    /**
+     * set budget for each category
+     *
+     * @param scanner system input object for user input
+     */
+    public void setBudget(Scanner scanner) {
 
         for (Category category : inStore.getCategoryMap().values()) {
             System.out.println("Enter the budget for " + category.getName() + " category");
@@ -203,18 +182,18 @@ public class ExpenseTracker {
                     scanner.next();
                 }
             }
-            categoryBudgets.add(new CategoryBudget(category, categoryBudget));
+            category.setCategoryBudget(categoryBudget);
         }
-
-
-        userBudget = new Budget(categoryBudgets, overallBudgetAmount);
-
-        inStore.setBudget(userBudget);
 
         System.out.println("Budget set successfully.");
     }
 
-    private static Map<String, Double> summarizeTransactions() {
+    /**
+     * summarize the transactions by each category
+     *
+     * @return map of summed transaction for each category name
+     */
+    private Map<String, Double> summarizeTransactions() {
 
         TransactionIterator iterator = transactionCollection.createTransactionIterator(inStore);
         Map<String, Double> summarizedTransactions = new HashMap<>();
@@ -233,31 +212,22 @@ public class ExpenseTracker {
     }
 
 
-    private static void trackProgress() {
-        Budget budget = inStore.getBudget();
-        if (budget == null) {
-            System.out.println("Please set the budget first");
-            return;
-        }
+    /**
+     * shows the progress of the users based of the budget and current transactions
+     */
+    public void trackProgress() {
+        System.out.println("Please make sure you have set the budget for each category");
+
+        Map<String, Double> summarizedTransactions = summarizeTransactions();
+        double overallBudget = 0;
 
         System.out.println("Your current progress for the budget can be seen as follows");
-        Map<String, Double> summarizedTransactions = summarizeTransactions();
 
-
-        System.out.println("Overall allocated budget: " + budget.getTotalBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault("overall", 0.00));
-
-
-        for (CategoryBudget categoryBudget : budget.getCategoryBudgets()) {
-            String categoryName = categoryBudget.getCategory().getName();
-            System.out.println("Budget for " + categoryName + ": " + categoryBudget.getBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault(categoryName, 0.0));
+        for (Category category : inStore.getCategoryMap().values()) {
+            String categoryName = category.getName();
+            System.out.println("Budget for " + categoryName + ": " + category.getCategoryBudget() + " and current expenditure: " + summarizedTransactions.getOrDefault(categoryName, 0.0));
+            overallBudget += category.getCategoryBudget();
         }
-
+        System.out.println("Overall allocated budget: " + overallBudget + " and current expenditure: " + summarizedTransactions.getOrDefault("overall", 0.00));
     }
-
-    private static void resetBudget() {
-        inStore.setBudget(null);
-        System.out.println("Budget reset completed");
-    }
-
-
 }

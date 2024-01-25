@@ -11,10 +11,10 @@ public class Transaction {
     private boolean recurring;
     private String note;
 
-    private final static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+    private final static AtomicInteger ID_GENERATOR_TRANSACTION = new AtomicInteger(1);
 
     public Transaction(Category category, LocalDateTime dateTime, double amount, boolean recurring, String note) {
-        this.id = ID_GENERATOR.getAndIncrement();
+        this.id = ID_GENERATOR_TRANSACTION.getAndIncrement();
         this.category = category;
         this.dateTime = dateTime;
         this.amount = amount;
@@ -22,13 +22,15 @@ public class Transaction {
         this.note = note;
     }
 
+    public Transaction() {
+        this.id = ID_GENERATOR_TRANSACTION.getAndIncrement();
+
+    }
+
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Category getCategory() {
         return category;

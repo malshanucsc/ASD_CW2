@@ -73,6 +73,8 @@ public class ExpenseTracker {
                 System.out.println("Enter new category name: ");
                 String categoryName = scanner.nextLine();
                 category = new Category(categoryName);
+                inStore.getCategoryMap().put(category.getId(), category);
+                System.out.println("Category added successfully.");
                 break;
 
             } else {

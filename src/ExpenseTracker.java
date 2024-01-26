@@ -70,7 +70,7 @@ public class ExpenseTracker {
                 break;
 
             } else if (isUsingExisting.equals("N")) {
-
+                System.out.println("Enter new category name: ");
                 String categoryName = scanner.nextLine();
                 category = new Category(categoryName);
                 break;

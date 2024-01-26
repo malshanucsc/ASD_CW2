@@ -3,12 +3,9 @@ package src;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Category {
-
     private int id;
     private String name;
-
     private double categoryBudget;
-
     private final static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
 
     public Category(String name) {
@@ -20,19 +17,15 @@ public class Category {
     public int getId() {
         return id;
     }
-
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
     public double getCategoryBudget() {
         return categoryBudget;
     }
-
     public void setCategoryBudget(double categoryBudget) {
         this.categoryBudget = categoryBudget;
     }

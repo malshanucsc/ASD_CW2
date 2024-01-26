@@ -48,6 +48,7 @@ public class ExpenseTracker {
 
         while (true) {
             String isUsingExisting = scanner.next();
+            scanner.nextLine();
             if (isUsingExisting.equals("Y")) {
 
                 System.out.println("Enter category Id?");
@@ -158,6 +159,7 @@ public class ExpenseTracker {
      */
     public void addCategory(Scanner scanner) {
         // Add category to InStore
+        scanner.nextLine();
         System.out.print("Enter category name: ");
         String categoryName = scanner.nextLine();
         Category category = new Category(categoryName);
